@@ -90,7 +90,7 @@ function past_activity_dropdown_onchange() {
  * ONCLICK - Validate Past Activity Form Contents, Send Data to Server, Remove
  * Form, and Display 'Add ...' Button with confirmation text above
  */
-function submit_past_activity_onclick() {
+async function submit_past_activity_onclick() {
   /* Connect to Past Activity Sections */
   let pActAdd = document.getElementById("pAct-Add");
   let pActForm = document.getElementById("pAct-Form");
@@ -124,12 +124,12 @@ function submit_past_activity_onclick() {
   console.log('Past Activity Sending:', data);
 
   /* Post Activity Data to Server */
-  fetch(`/store`, {
+  await fetch('/store', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(data), // post body
+    data: JSON.stringify(data), // post body
   })
   .then(response => response.json())
   .then(data => {

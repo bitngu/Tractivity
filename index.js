@@ -5,7 +5,6 @@ const GoogleStrategy = require('passport-google-oauth20');
 
 
 
-
 // Google login credentials, used when the user contacts
 // Google, to tell them where he is trying to login to, and show
 // that this domain is registe`red for this service. 
@@ -16,7 +15,6 @@ const GoogleStrategy = require('passport-google-oauth20');
 
 const hiddenClientID = process.env['ClientID']
 const hiddenClientSecret = process.env['ClientSecret']
-let usrProfile;
 
 // An object giving Passport the data Google wants for login.  This is 
 // the server's "note" to Google.
@@ -102,13 +100,8 @@ app.get('/auth/accepted',
 
 
 	function (req, res) {
-
-      console.log("Inside auth profile has arrived: ",usrProfile);
 	    console.log('Logged in and using cookies!')
-      // tell browser to get the hidden main page of the app
-   
-      console.log("Request Body: "+JSON.stringify(req.body));
-	    res.redirect(`/public/index.html?userName=${usrProfile.name.givenName}`);
+	    res.redirect(`/public/index.html`)
      
 	});
 
@@ -134,6 +127,40 @@ app.get('/all', async function (req, res){
 
 
 
+// This is where the server recieves and responds to store POST requests
+app.post("/store", isAuthenticated, function(request, response, next) {
+  console.log("Server recieved a post request at", request.url);
+  console.log("userid " + request.user.userData.userId);
+
+  // let activity = act.Activity(request.body)
+  // await dbo.post_activity(activity)
+  
+  response.send({ message: "I got your POST request"});
+});
+
+
+// This is where the server recieves and responds to  reminder GET requests
+app.get('/reminder', isAuthenticated, async function(request, response, next) {
+  console.log("Server recieved a post request at", request.url)
+  
+  let currTime = newUTCTime()
+  currTime = (new Date()).getTime()
+
+  // Get Most Recent Past Planned Activity and Delete All Past Planned Activities
+  let result = await dbo.get_most_recent_planned_activity_in_range(0, currTime)
+  await dbo.delete_past_activities_in_range(0, currTime);
+
+  if (result != null){
+    // Format Activity Object Properly
+    result.scalar = result.amount
+    result.date = result['MAX(date)']
+    // Send Client Most Recent Planned Activity from the Past
+    response.send(act.Activity(result));
+  } else {
+    response.send({message: 'All activities up to date!'});
+  }
+  
+});
 
   
 
@@ -224,17 +251,9 @@ async function gotProfile(accessToken, refreshToken, profile, done) {
 
     if(result.length == 0){
       await profileDB.run(insertUser, [id, profile.name.givenName]);
-      console.log("adding to db");
+      console.log("Adding new user to data");
     }
 
-    //see output: delete later;
-    result = await profileDB.all("SELECT * from Profile", []);
-    console.log("length of database: ", result.length);
-    for(i = 0; i < result.length; ++i){
-       console.log(result[i]);
-    }
- 
-    usrProfile = profile;
     let userid = profile.id;  
     done(null, userid); 
 }

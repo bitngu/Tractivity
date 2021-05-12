@@ -22,7 +22,7 @@ const db = require('./sqlWrap');
 const act = require('./activity');
 
 // SQL commands for ActivityTable
-const insertDB = "insert into ActivityTable (activity, date, amount) values (?,?,?)"
+const insertDB = "insert into ActivityTable (userId, activity, date, amount) values (?,?,?,?)"
 const getOneDB = "select * from ActivityTable where activity = ? and date = ?";
 const allDB = "select * from ActivityTable where activity = ?";
 const deletePrevPlannedDB = "DELETE FROM ActivityTable WHERE amount < 0 and date BETWEEN ? and ?";
@@ -119,6 +119,7 @@ async function testDB () {
  * @param {float} activity.scalar - measure of activity conducted
  */
 async function post_activity(activity) {
+  
   try {
     await db.run(insertDB, act.ActivityToList(activity));
   } catch (error) {

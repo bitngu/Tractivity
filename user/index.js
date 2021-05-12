@@ -12,6 +12,11 @@ const dbo = require('./databaseOps');
 const db = require('./sqlWrap');
 
 
+
+
+
+
+
 // functions that verify activities before putting them in database
 const act = require('./activity');
 
@@ -20,6 +25,7 @@ const app = express();
 
 // use this instead of the older body-parser
 app.use(express.json());
+
 
 // make all the files in 'public' available on the Web
 app.use(express.static('public'))
@@ -41,38 +47,6 @@ app.get('/all', async function(request, response, next) {
 
 
 
-// This is where the server recieves and responds to store POST requests
-app.post('/store', async function(request, response, next) {
-  console.log("Server recieved a post request at", request.url);
-
-  let activity = act.Activity(request.body)
-  await dbo.post_activity(activity)
-  
-  response.send({ message: "I got your POST request"});
-});
-
-// This is where the server recieves and responds to  reminder GET requests
-app.get('/reminder', async function(request, response, next) {
-  console.log("Server recieved a post request at", request.url)
-  
-  let currTime = newUTCTime()
-  currTime = (new Date()).getTime()
-
-  // Get Most Recent Past Planned Activity and Delete All Past Planned Activities
-  let result = await dbo.get_most_recent_planned_activity_in_range(0, currTime)
-  await dbo.delete_past_activities_in_range(0, currTime);
-
-  if (result != null){
-    // Format Activity Object Properly
-    result.scalar = result.amount
-    result.date = result['MAX(date)']
-    // Send Client Most Recent Planned Activity from the Past
-    response.send(act.Activity(result));
-  } else {
-    response.send({message: 'All activities up to date!'});
-  }
-  
-});
 
 
 // This is where the server recieves and responds to week GET requests
