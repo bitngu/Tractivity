@@ -25,10 +25,10 @@ const act = require('./activity');
 const insertDB = "insert into ActivityTable (userId, activity, date, amount) values (?,?,?,?)"
 const getOneDB = "select * from ActivityTable where activity = ? and date = ?";
 const allDB = "select * from ActivityTable where activity = ?";
-const deletePrevPlannedDB = "DELETE FROM ActivityTable WHERE amount < 0 and date BETWEEN ? and ?";
-const getMostRecentPrevPlannedDB = "SELECT rowIdNum, activity, MAX(date), amount FROM ActivityTable WHERE amount <= 0 and date BETWEEN ? and ?";
-const getMostRecentDB = "SELECT MAX(rowIdNum), activity, date, amount FROM ActivityTable";
-const getPastWeekByActivityDB = "SELECT * FROM ActivityTable WHERE activity = ? and date BETWEEN ? and ? ORDER BY date ASC";
+const deletePrevPlannedDB = "DELETE FROM ActivityTable WHERE amount < 0 and userId = ? and date BETWEEN ? and ?";
+const getMostRecentPrevPlannedDB = "SELECT rowIdNum, activity, MAX(date), amount FROM ActivityTable WHERE amount <= 0 and userId = ? and date BETWEEN ? and ?";
+const getMostRecentDB = "SELECT MAX(rowIdNum), activity, date, amount FROM ActivityTable where userId = ?";
+const getPastWeekByActivityDB = "SELECT * FROM ActivityTable WHERE userId = ? and activity = ? and date BETWEEN ? and ? ORDER BY date ASC";
 
 // Testing function loads some data into DB. 
 // Is called when app starts up to put fake 
@@ -133,14 +133,16 @@ async function post_activity(activity) {
  * date range
  * @param {number} min - ms since 1970
  * @param {number} max - ms since 1970
+ * @param {number} userId - Google user id
  * @returns {Activity} activity 
  * @returns {string} activity.activity - type of activity
  * @returns {number} activity.date - ms since 1970
  * @returns {float} activity.scalar - measure of activity conducted
  */
-async function get_most_recent_planned_activity_in_range(min, max) {
+
+async function get_most_recent_planned_activity_in_range(min, max, userId) {
   try {
-    let results = await db.get(getMostRecentPrevPlannedDB, [min, max]);
+    let results = await db.get(getMostRecentPrevPlannedDB, [userId, min, max]);
     return (results.rowIdNum != null) ? results : null;
   }
   catch (error) {
@@ -153,14 +155,15 @@ async function get_most_recent_planned_activity_in_range(min, max) {
 
 /**
  * Get the most recently inserted activity in the database
+ * @param {number} userId - Google user id
  * @returns {Activity} activity 
  * @returns {string} activity.activity - type of activity
  * @returns {number} activity.date - ms since 1970
  * @returns {float} activity.scalar - measure of activity conducted
  */
-async function get_most_recent_entry() {
+async function get_most_recent_entry(userId) {
   try {
-    let result = await db.get(getMostRecentDB, []);
+    let result = await db.get(getMostRecentDB, [userId]);
     return (result['MAX(rowIdNum)'] != null) ? result : null;
   }
   catch (error) {
@@ -176,11 +179,12 @@ async function get_most_recent_entry() {
  * @param {string} activityType - type of activity
  * @param {number} min - ms since 1970
  * @param {number} max - ms since 1970
+ * @param {number} userId - Google user id
  * @returns {Array.<Activity>} similar activities
  */
-async function get_similar_activities_in_range(activityType, min, max) {
+async function get_similar_activities_in_range(activityType, min, max, userId) {
   try {
-    let results = await db.all(getPastWeekByActivityDB, [activityType, min, max]);
+    let results = await db.all(getPastWeekByActivityDB, [userId, activityType, min, max]);
     return results;
   }
   catch (error) {
@@ -195,10 +199,11 @@ async function get_similar_activities_in_range(activityType, min, max) {
  * min and max date range
  * @param {number} min - ms since 1970
  * @param {number} max - ms since 1970
+ * @param {number} userId - Google user id
  */
-async function delete_past_activities_in_range(min, max) {
+async function delete_past_activities_in_range(min, max, userId) {
   try {
-    await db.run(deletePrevPlannedDB, [min, max]);
+    await db.run(deletePrevPlannedDB, [userId, min, max]);
   }
   catch (error) {
     console.log(error);
