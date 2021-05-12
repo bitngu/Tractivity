@@ -1,0 +1,134 @@
+
+
+
+/* Larger screen */
+
+body {
+  display: flex;
+  text-align: -webkit-center;
+  margin: 0;
+}
+
+
+
+.top {
+  background-color: #F2F2F2;
+  padding-top: 15%;
+  padding-left: 5%;
+  padding-right: 5%;
+  padding-bottom: 15%;
+}
+
+.tractivityImg{
+  width: 70%;
+
+}
+
+
+.greetings {
+  font-size: 2.5rem;
+}
+
+
+
+.bottom {
+  background-color: #333333;
+  padding-top: 15%;
+  padding-left: 5%;
+  padding-right: 5%;
+}
+
+.tractivityLogo {
+  width: 70%;
+}
+
+.Welcome {
+  font-size: 2rem;
+  padding-top: 15%;
+  padding-bottom: 10%;
+  color: #53e0cd;
+}
+
+.googleLogin {
+  max-width: 300px;
+  width: 100%;
+}
+
+.googleLogin > p {
+  font-size: 2rem;
+  color: #F2F2F2;
+}
+
+.g-signin2 {
+  text-align: -webkit-center;
+}
+
+
+a  {
+  text-decoration: none !important;
+}
+
+.google-btn {
+  width: 100%;
+  height: 60px;
+  background-color: #fff;
+  }
+
+  .google-icon-wrapper {
+    position: absolute;
+    margin-top: 8px;
+    margin-left: 10px;
+  }
+  .google-icon {
+    position: absolute;
+    margin-top: 5px;
+    margin-left: 10px;
+    width: 30px;
+    height: 30px;
+  }
+  .btn-text {
+    margin: 0 0 0 50px;
+    color: grey;
+    font-size: 25px;
+    padding-top: 15px;
+    font-family: "Roboto";
+  }
+
+
+
+/* smaller screen */
+@media  (max-width: 750px){
+  body {
+    flex-direction: column;
+  }
+  .top {
+    padding-bottom: 5%;
+  }
+  .tractivityImg {
+    width: 80%;
+  }
+  .greetings {
+    font-size: 1.5rem;
+  }
+  .bottom {
+    padding-left: 10%;
+    padding-right: 10%;
+    padding-bottom: 30%;
+
+  }
+  .tractivityLogo {
+    width: 50%;
+  }
+
+  .Welcome {
+    font-size: 1.5rem;
+  }
+
+}
+
+@media  (max-width: 400px){
+ .btn-text {
+   font-size: 22px;
+   padding-top: 17px;
+ }
+}
