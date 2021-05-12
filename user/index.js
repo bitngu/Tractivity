@@ -13,10 +13,6 @@ const db = require('./sqlWrap');
 
 
 
-
-
-
-
 // functions that verify activities before putting them in database
 const act = require('./activity');
 
@@ -43,8 +39,6 @@ app.get('/all', async function(request, response, next) {
   
   response.send(results);
 });
-
-
 
 
 

@@ -9,6 +9,7 @@ module.exports = {
  * Creates an Activity Object containing a date of completion, activity name, 
  * and measurement
  * @param {Object} obj - stores activity data to build an activity object
+ * @param {int} obj.userId
  * @param {string} obj.date
  * @param {string} obj.activity
  * @param {float} obj.scalar
@@ -25,14 +26,16 @@ function Activity(obj) {
         obj.date = (new Date(obj.date.replace('-','/'))).getTime()
     }
 
-    if (obj.date && obj.activity && obj.scalar) {
+    if (obj.userId && obj.date && obj.activity && obj.scalar) {
         activity = {
+            userId: obj.userId,
             date: obj.date,
             activity: obj.activity,
             scalar: obj.scalar
         }
-    } else if (obj.date && obj.activity) {
+    } else if (obj.userId && obj.date && obj.activity) {
         activity = {
+            userId: obj.userId,
             date: obj.date,
             activity: obj.activity,
             scalar: -1
@@ -68,5 +71,5 @@ function ActivityToList(activity) {
         throw new ActivityFormatException(activity)
     }
 
-    return [activity.activity, activity.date, activity.scalar]
+    return [activity.userId, activity.activity, activity.date, activity.scalar]
 }

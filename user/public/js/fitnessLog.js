@@ -129,7 +129,7 @@ async function submit_past_activity_onclick() {
     headers: {
       'Content-Type': 'application/json'
     },
-    data: JSON.stringify(data), // post body
+    body: JSON.stringify(data), // post body
   })
   .then(response => response.json())
   .then(data => {

@@ -120,23 +120,28 @@ app.get('/*',
        ); 
 
 app.use(express.json());
+
+
+
+const dbo = require('./user/databaseOps');
+const act = require('./user/activity');
+
 app.get('/all', async function (req, res){
   res.send(await dbo.get_all())
 });
 
 
-
-
 // This is where the server recieves and responds to store POST requests
-app.post("/store", isAuthenticated, function(request, response, next) {
+app.post("/store", isAuthenticated, async function(request, response, next) {
   console.log("Server recieved a post request at", request.url);
-  console.log("userid " + request.user.userData.userId);
-
-  // let activity = act.Activity(request.body)
-  // await dbo.post_activity(activity)
+  request.body["userId"] = request.user.userData.userId;
+  let activity = act.Activity(request.body);
+  await dbo.post_activity(activity);
   
   response.send({ message: "I got your POST request"});
 });
+
+dbo.get_all()
 
 
 // This is where the server recieves and responds to  reminder GET requests
