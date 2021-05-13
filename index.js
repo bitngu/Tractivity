@@ -200,8 +200,11 @@ app.get('/reminder', isAuthenticated, async function(request, response, next) {
 
   if (result != null){
     // Format Activity Object Properly
+    //need to pass an "id" or else it will throw error
+    result.userId = "id";
     result.scalar = result.amount
     result.date = result['MAX(date)']
+    
     // Send Client Most Recent Planned Activity from the Past
     response.send(act.Activity(result));
   } else {
